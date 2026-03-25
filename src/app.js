@@ -1,24 +1,19 @@
-import express from "express";
+import express from "express"
 import users from "./routers/users.js"
 
 
-const app = express();
-const port = 8081;
+export const app = express()
 
-app.get("/", (req, res) => {
-    res.send("seja Bem-vindo")
+app.get("/health", (req, res) => {
+    res.json(
+        {message: "The server is up and running"}
+    )
 });
 
 // definindo o uso de json nas rotas
-app.use(express.json());
+app.use(express.json())
 
 // incluindo rota
-app.use("/users", users);
+app.use("/users", users)
 
-app.listen(
-    port,
-    () => {
-        console.log(`o servidor esta rodando na porta ${port}...`)
-    }
-)
 
