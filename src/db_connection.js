@@ -2,9 +2,10 @@ import mongoose from "mongoose"
 import dotenv from "dotenv"
 
 
-dotenv.config({path: "../.env"})
+dotenv.config({path: [".env","../.env"]})
 
-export async function mongodb_connection(){
+console.log(process.env.DATABASE_URL)
+export async function mongodb_Connection(){
     await mongoose.connect(
         process.env.DATABASE_URL
     )
