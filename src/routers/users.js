@@ -1,9 +1,8 @@
 import express from "express"
+import { UsersController } from "../controllers/users_controller.js"
 
 
 export const router = express.Router()
+const users_controller = new UsersController()
 
-router.post("/", (req, res) => {
-    const pessoa = req.body
-    res.status(201).json(pessoa)
-})
+router.post("/", users_controller.Post)
