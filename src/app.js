@@ -10,10 +10,19 @@ app.get("/health", (req, res) => {
     )
 });
 
-// definindo o uso de json nas rotas
+/* definindo o uso de json nas rotas */
 app.use(express.json())
 
-// incluindo rota
-app.use("/users", users)
+/* incluindo rota */
+app.use("/users", users) 
+
+/* middleware para tratamento de erros */
+app.use((error, req, res, next) => {
+    if (error instanceof SyntaxError){
+        res.status(400).json({message: "Badly formatted JSON"})
+    }
+    res.status(error.status_code).json({message: error.message })
+})
+
 
 
