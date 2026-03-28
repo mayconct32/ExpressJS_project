@@ -7,3 +7,4 @@ const users_controller = new UsersController()
 
 router.post("/", users_controller.create_user)
 router.get("/:user_id", users_controller.get_user)
+router.put("/:user_id", users_controller.update_user)
