@@ -118,4 +118,24 @@ export class UsersController {
             {message: "User has successfully updated"}
         )
     }
+
+    async delete_user(req, res){
+        const { user_id } = req.params
+
+        /* validacao de user_id */
+        if(!isValidObjectId(user_id)){
+            throw new exceptions.UserNotFoundError("this ID is invalid")
+        }
+
+        const user = await users_model.findByIdAndDelete(user_id)
+
+        /* verificando se ha usuario com esse ID*/
+        if (!user){
+            throw new exceptions.UserNotFoundError("This user does not exist")
+        }
+
+        res.status(200).json(
+            {message: "The user has been successfully deleted"}
+        )
+    }
 }
