@@ -19,9 +19,13 @@ app.use("/users", users)
 /* middleware para tratamento de erros */
 app.use((error, req, res, next) => {
     if (error instanceof SyntaxError){
-        res.status(400).json({message: "Badly formatted JSON"})
+        return res.status(400).json({message: "Badly formatted JSON"})
     }
-    res.status(error.status_code).json({message: error.message })
+    try{
+        return res.status(error.status_code).json({message: error.message})
+    } catch(err) {
+        return res.status(500).json({message: err})
+    }
 })
 
 

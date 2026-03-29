@@ -1,140 +1,36 @@
 import { users_model} from "../models/users_model.js"
-import exceptions from "../exceptions.js"
-import { isValidObjectId } from "mongoose"
+import { validationResult } from "express-validator";
 
 
 export class UsersController {
+    async validator_middleware(req, res, next){
+        const error = validationResult(req)
+        if (!error.isEmpty()){
+            return res.status(400).json({message: error})
+        } 
+        next()
+    }
+
     async create_user(req, res){
-        const {username, email, password} = req.body
-
-        /* validacao de body */
-        if (!username){
-            throw new exceptions.BadRequestError(
-                "Requires username"
-            )
-        } else if (!email){
-            throw new exceptions.BadRequestError(
-                "Requires email"
-            )
-        } else if (!password){
-            throw new exceptions.BadRequestError(
-                "Requires password"
-            )
-        }
-
-        /* validacao de email */
-        if (!email.includes("@")){
-            throw new exceptions.BadRequestError(
-                "This email is not valid"
-            )
-        }
-
-        const conflict_user = await users_model.findOne(
-            {email: req.body.email}
-        )
-
-        /* validacao de email unico */
-        if (conflict_user){
-            throw new exceptions.ConflictingUserError(
-                "this email is already in use"
-            )
-        }
-
         const user = await users_model.create(req.body)
-        res.status(201).json(user)
+        return res.status(201).json(user)
     }
 
     async get_user(req, res){
-        const { user_id } = req.params
-
-        /* validacao de user_id */
-        if(!isValidObjectId(user_id)){
-            throw new exceptions.UserNotFoundError("this ID is invalid")
-        }
-
-        const user = await users_model.findById(user_id)
-
-        /* verificando se ha usuario com esse ID */
-        if (!user){
-            throw new exceptions.UserNotFoundError("This user does not exist")
-        }
-
-        res.status(200).json(user)
+        const user = await users_model.findById(req.params.user_id)
+        return res.status(200).json(user)
     }
 
     async update_user(req, res){
-        const { user_id } = req.params
-
-        /* validacao de user_id */
-        if(!isValidObjectId(user_id)){
-            throw new UserNotFoundError("this ID is invalid")
-        }
-
-        const {username, email, password} = req.body
-
-        /* validacao de body */
-        if (!username){
-            throw new exceptions.BadRequestError(
-                "Requires username"
-            )
-        } else if (!email){
-            throw new exceptions.BadRequestError(
-                "Requires email"
-            )
-        } else if (!password){
-            throw new exceptions.BadRequestError(
-                "Requires password"
-            )
-        }
-
-        /* validacao de email */
-        if (!email.includes("@")){
-            throw new exceptions.BadRequestError(
-                "This email is not valid"
-            )
-        }
-        
-        const conflict_user = await users_model.findOne(
-            {email: req.body.email}
-        )
-
-        /* validacao de email unico */
-        if (conflict_user){
-            throw new exceptions.ConflictingUserError(
-                "this email is already in use"
-            )
-        }
-
-        const user = await users_model.findByIdAndUpdate(
-            user_id, req.body
-        )
-
-        /* verificando se ha usuario com esse ID*/
-        if (!user){
-            throw new exceptions.UserNotFoundError("This user does not exist")
-        }
-
-        res.status(200).json(
+        await users_model.updateOne({_id: req.params.user_id}, req.body)
+        return res.status(200).json(
             {message: "User has successfully updated"}
         )
     }
 
     async delete_user(req, res){
-        const { user_id } = req.params
-
-        /* validacao de user_id */
-        if(!isValidObjectId(user_id)){
-            throw new exceptions.UserNotFoundError("this ID is invalid")
-        }
-
-        const user = await users_model.findByIdAndDelete(user_id)
-
-        /* verificando se ha usuario com esse ID*/
-        if (!user){
-            throw new exceptions.UserNotFoundError("This user does not exist")
-        }
-
-        res.status(200).json(
+        await users_model.deleteOne({_id: req.params.user_id})
+        return res.status(200).json(
             {message: "The user has been successfully deleted"}
         )
     }
