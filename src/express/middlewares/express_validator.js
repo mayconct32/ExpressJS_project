@@ -1,12 +1,11 @@
 import { body, param } from "express-validator"
-import { users_model } from "./models/users_model.js"
+import { users_model } from "../../models/users_model.js"
 import { isValidObjectId } from "mongoose"
-import exceptions from "./exceptions.js"
 
 
 export const body_validator = [
     body("username").notEmpty().trim().withMessage(
-        "Requires password"
+        "Requires username"
     ).isLength({min: 5}).withMessage(
         "The username must be at least 5 characters long"
     ).custom(
@@ -15,9 +14,7 @@ export const body_validator = [
                 {username: username}
             )
             if (conflict_user){
-                throw new exceptions.ConflictingUserError(
-                    "this username is already in use"
-                )
+                throw new Error("this username is already in use")
             }
         }
     ),
@@ -31,9 +28,7 @@ export const body_validator = [
                 {email: email}
             )
             if (conflict_user){
-                throw new exceptions.ConflictingUserError(
-                    "this email is already in use"
-                )
+                throw new Error("this email is already in use")
             }
         }
     ),
@@ -44,19 +39,21 @@ export const body_validator = [
     )
 ]
 
-export const param_validator = [
-    param("user_id").custom(async user_id => {
-        if(!isValidObjectId(user_id)){
-            throw new exceptions.UserNotFoundError("this ID is invalid")
-        }
-        const user = await users_model.findOne({_id: user_id})
-        if (!user){
-            throw new exceptions.UserNotFoundError("This user does not exist")
-        }
+export const param_validator = param("user_id").custom(async user_id => {
+    if(!isValidObjectId(user_id)){
+        throw new Error("this ID is invalid")
+    } 
+    const user = await users_model.findOne({_id: user_id})
+    if (!user){
+        throw new Error("This user does not exist")
     }
-)
-]
+})
 
-export const param_and_body_validator = param_validator.concat(
-    body_validator
-)
+export const auth_body_validator = [
+    body("username").notEmpty().trim().withMessage(
+        "Requires username"
+    ),
+    body("password").notEmpty().trim().withMessage(
+        "Requires password "
+    )
+]

@@ -5,28 +5,8 @@ class ApiError extends Error{
     }
 }
 
-class UserNotFoundError extends ApiError{
+export class AuthenticationError extends ApiError{
     constructor(message){
-        super(message, 404)
+        super(message, 401)
     }
-}
-
-class ConflictingUserError extends ApiError{
-    constructor(message){
-        super(message, 409)
-    }
-}
-
-class BadRequestError extends ApiError{
-    constructor(message){
-        super(message, 400)
-    }
-}
-
-
-export default{
-    ApiError,
-    UserNotFoundError,
-    ConflictingUserError,
-    BadRequestError
 }

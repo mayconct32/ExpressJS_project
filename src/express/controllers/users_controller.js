@@ -1,27 +1,33 @@
-import { users_model} from "../models/users_model.js"
-import { validationResult } from "express-validator";
+import { users_model } from "../../models/users_model.js"
+import { encrypt_password } from "../../services/encryption.js"
 
 
 export class UsersController {
-    async validator_middleware(req, res, next){
-        const error = validationResult(req)
-        if (!error.isEmpty()){
-            return res.status(400).json({message: error})
-        } 
-        next()
-    }
-
     async create_user(req, res){
+        req.body.password = await encrypt_password(req.body.password)
         const user = await users_model.create(req.body)
-        return res.status(201).json(user)
+        return res.status(201).json(
+            {
+                user_id: String(user._id),
+                username: user.username,
+                email: user.email
+            }
+        )
     }
 
     async get_user(req, res){
         const user = await users_model.findById(req.params.user_id)
-        return res.status(200).json(user)
+        return res.status(200).json(
+            {
+                user_id: String(user._id),
+                username: user.username,
+                email: user.email
+            }
+        )
     }
 
     async update_user(req, res){
+        req.body.password = await hash_password(req.body.password)
         await users_model.updateOne({_id: req.params.user_id}, req.body)
         return res.status(200).json(
             {message: "User has successfully updated"}

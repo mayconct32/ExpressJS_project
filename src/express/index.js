@@ -1,4 +1,4 @@
-import { mongodb_connection } from "./db_connection.js"
+import { mongodb_connection } from "../db_connection.js"
 import { app } from "./app.js"
 
 
