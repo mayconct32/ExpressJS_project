@@ -1,6 +1,5 @@
 import dotenv from "dotenv"
 import jwt from "jsonwebtoken"
-import { AuthenticationError } from "../exceptions.js"
 
 
 dotenv.config({path: [".env", "../.env"]})
@@ -18,12 +17,9 @@ export function coding_token(payload){
 export function decode_token(token){
     try{
         const user = jwt.verify(token, process.env.SECRET_KEY)
-        console.log(user)
         return user
     } catch(err){
-        throw new AuthenticationError(
-            "invalid token"
-        )
+        return
     }
 }
 

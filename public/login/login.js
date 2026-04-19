@@ -21,25 +21,31 @@ const password = document.getElementById('password');
 
 form_login.addEventListener("submit", (e) => {
     e.preventDefault();
-    if (username.value && password.value) {
-		const body = {
-			username: username.value,
-			password: password.value
-		};
-		const headers = {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify(body),
-		};
-        fetch("http://127.0.0.1:8081/auth", headers)
-		.then(response => response.json()
-			.then(a => console.log(a))
-			.catch(j => j)
+    if (!username.value || !password.value){
+		return
+	}
+	const body = {
+		username: username.value,
+		password: password.value
+	};
+	const headers = {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify(body),
+	};
+	fetch("http://127.0.0.1:3000/auth", headers)
+	.then(response => response.json()
+		.then(response => 
+			{
+				sessionStorage.setItem("token", response.token)
+				window.location.replace('http://127.0.0.1:3000/chat/chat_example.html');
+			}
 		)
-		.catch(response => response)
-    }
+		.catch(err => err)
+	)
+	.catch(response => response)
 });
 
 const form_register = document.getElementById('register-form');
@@ -62,10 +68,14 @@ form_register.addEventListener("submit", (e) => {
 			},
 			body: JSON.stringify(body),
 		};
-		console.log(username.value)
-        fetch("http://127.0.0.1:8081/users", headers)
-		.then(response => response.json()
-			.then(json => console.log(json))
+        const a = fetch("http://127.0.0.1:3000/users", headers)
+		.then(
+			response => response.json()
+			.then(json => {
+				if (response.status === 201){
+					window.location.href = "http://127.0.0.1:3000/login/login_example.html"
+				}
+			})
 			.catch(err => console.log(err))
 		)
 		.catch(response => response)
