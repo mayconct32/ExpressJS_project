@@ -27,7 +27,9 @@ export class UsersController {
     }
 
     async update_user(req, res){
-        req.body.password = await hash_password(req.body.password)
+        if (req.body.password){
+            req.body.password = await encrypt_password(req.body.password)
+        }
         await users_model.updateOne({_id: req.params.user_id}, req.body)
         return res.status(200).json(
             {message: "User has successfully updated"}
