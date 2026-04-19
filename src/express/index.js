@@ -1,21 +1,21 @@
 import { mongodb_connection } from "../db_connection.js"
-import { app } from "./app.js"
 import { server_http } from "./socket_io.js"
 
 
-mongodb_connection()
-
-// app.listen(
-//     8081,
-//     () => {
-//         console.log(`The server is running on port 8081...`)
-//     }
-// )
-
-server_http.listen(
-    3000, 
-    () => {
-        console.log("Server is running on PORT 3000")
+async function start_server(){
+    try{
+        await mongodb_connection()
+        server_http.listen(
+            3000, 
+            () => {
+                console.log("Server is running on PORT 3000")
+            }
+        )
+    } catch (error){
+        console.error("Failed to connect to MongoDB", error)
+        process.exit(1)
     }
-)
+}
+
+start_server()
 
