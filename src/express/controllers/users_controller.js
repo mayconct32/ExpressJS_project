@@ -3,7 +3,7 @@ import { encrypt_password } from "../../services/encryption.js"
 
 
 export class UsersController {
-    async create_user(req, res){
+    create_user = async (req, res) => {
         req.body.password = await encrypt_password(req.body.password)
         const user = await users_model.create(req.body)
         return res.status(201).json(
@@ -15,7 +15,7 @@ export class UsersController {
         )
     }
 
-    async get_user(req, res){
+    get_user = async (req, res) => {
         const user = await users_model.findById(req.params.user_id)
         return res.status(200).json(
             {
@@ -26,7 +26,7 @@ export class UsersController {
         )
     }
 
-    async update_user(req, res){
+    update_user = async (req, res) => {
         if (req.body.password){
             req.body.password = await encrypt_password(req.body.password)
         }
@@ -36,7 +36,7 @@ export class UsersController {
         )
     }
 
-    async delete_user(req, res){
+    delete_user = async (req, res) => {
         await users_model.deleteOne({_id: req.params.user_id})
         return res.status(200).json(
             {message: "The user has been successfully deleted"}
