@@ -1,11 +1,14 @@
-import { users_model } from "../../models/users_model.js"
-import { encrypt_password } from "../../services/encryption.js"
+import {
+    create_user as create_user_service,
+    delete_user as delete_user_service,
+    get_user_by_id,
+    update_user as update_user_service
+} from "../../services/users_service.js"
 
 
 export class UsersController {
     create_user = async (req, res) => {
-        req.body.password = await encrypt_password(req.body.password)
-        const user = await users_model.create(req.body)
+        const user = await create_user_service(req.body)
         return res.status(201).json(
             {
                 user_id: String(user._id),
@@ -16,7 +19,7 @@ export class UsersController {
     }
 
     get_user = async (req, res) => {
-        const user = await users_model.findById(req.params.user_id)
+        const user = await get_user_by_id(req.params.user_id)
         return res.status(200).json(
             {
                 user_id: String(user._id),
@@ -27,17 +30,14 @@ export class UsersController {
     }
 
     update_user = async (req, res) => {
-        if (req.body.password){
-            req.body.password = await encrypt_password(req.body.password)
-        }
-        await users_model.updateOne({_id: req.params.user_id}, req.body)
+        await update_user_service(req.params.user_id, req.body)
         return res.status(200).json(
             {message: "User has successfully updated"}
         )
     }
 
     delete_user = async (req, res) => {
-        await users_model.deleteOne({_id: req.params.user_id})
+        await delete_user_service(req.params.user_id)
         return res.status(200).json(
             {message: "The user has been successfully deleted"}
         )
