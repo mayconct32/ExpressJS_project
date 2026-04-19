@@ -22,6 +22,7 @@ router.get(
     "/:user_id", 
     param_validator, 
     validation_handler,
+    verify_permission,
     users_controller.get_user
 )
 

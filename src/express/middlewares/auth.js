@@ -1,10 +1,13 @@
-import { users_model } from "../../models/users_model.js";
-import { decode_token } from "../../services/auth_service.js";
-import { verify_password } from "../../services/encryption.js";
+import { 
+    decode_token,
+    authenticate_credentials,
+    build_user_token_payload,
+    get_token_from_authorization_header
+} from "../../services/auth_service.js"
 
 
 export const verify_permission = (req, res, next) => {
-    const token = req.headers.authorization
+    const token = get_token_from_authorization_header(req.headers.authorization)
     if (!token) {
         return res.status(401).json({message: "Please log in"})
     }
@@ -16,20 +19,15 @@ export const verify_permission = (req, res, next) => {
 }
 
 export const verify_credentials = async (req, res, next) => {
-    var { username, password } = req.body
-    const user = await users_model.findOne({username: username})
-    if (!user || !(await verify_password(password, user.password))){
+    const { username, password } = req.body
+    const user = await authenticate_credentials(username, password)
+    if (!user){
         return res.status(403).json(
             {message: "Invalid username or password"}
         )
     }
-    var { username, email, _id } = user
-    const user_token = {
-        user_id: String(_id),
-        username: username,
-        email: email
-    }
-    req.headers.user_token = user_token
+
+    req.user_token_payload = build_user_token_payload(user)
     next()
 }
 
