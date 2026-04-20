@@ -1,5 +1,6 @@
 import express from "express"
 import { UsersController } from "../controllers/users_controller.js"
+import { usersService } from "../../services/users_service.js"
 import { 
     create_user_body_validator,
     update_user_body_validator,
@@ -10,7 +11,7 @@ import { verify_permission } from "../middlewares/auth.js"
 
 
 export const router = express.Router()
-const users_controller = new UsersController()
+const users_controller = new UsersController(usersService)
 
 router.post(
     "/", 
