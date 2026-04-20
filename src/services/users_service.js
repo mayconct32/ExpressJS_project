@@ -8,18 +8,22 @@ export class UsersService {
         this.userRepository = userRepository
     }
 
-    create_user = async ({ username, email, password }) => {
-        const [username_conflict, email_conflict] = await Promise.all([
-            this.userRepository.usernameExists(username),
-            this.userRepository.emailExists(email)
+    verify_credentials = async(username, email) => {
+        const [userWithUsername, userWithEmail] = await Promise.all([
+            this.userRepository.findByUsername(username),
+            this.userRepository.findByEmail(email)
         ])
-
-        if (username_conflict) {
+        if (userWithUsername) {
             throw new ApiError("this username is already in use", 409)
         }
-        if (email_conflict) {
+        if (userWithEmail) {
             throw new ApiError("this email is already in use", 409)
         }
+
+    }
+
+    create_user = async ({ username, email, password }) => {
+        await this.verify_credentials(username, email)
 
         const hashed_password = await encrypt_password(password)
         const user = await this.userRepository.create({
@@ -36,9 +40,15 @@ export class UsersService {
     }
 
     update_user = async (user_id, payload) => {
-        await this.userRepository.findById(user_id)
+        const user = await this.userRepository.findById(user_id)
+
+        if (!user) {
+            throw new ApiError("This user does not exist", 404)
+        }
 
         const update_payload = { ...payload }
+
+        this.verify_credentials(update_payload.username, update_payload.email)
 
         if (update_payload.password) {
             update_payload.password = await encrypt_password(update_payload.password)
