@@ -2,8 +2,7 @@ import express from "express"
 import { UsersController } from "../controllers/users_controller.js"
 import { usersService } from "../../services/users_service.js"
 import { 
-    create_user_body_validator,
-    update_user_body_validator,
+    body_validator,
     user_id_param_validator
 } from "../middlewares/express_validator.js"
 import { validation_handler } from "../middlewares/error_handlers.js"
@@ -15,7 +14,7 @@ const users_controller = new UsersController(usersService)
 
 router.post(
     "/", 
-    create_user_body_validator, 
+    body_validator, 
     validation_handler,
     users_controller.create_user
 )
@@ -31,7 +30,7 @@ router.get(
 router.put(
     "/:user_id",
     user_id_param_validator,
-    update_user_body_validator,
+    body_validator,
     validation_handler,
     verify_permission,
     users_controller.update_user

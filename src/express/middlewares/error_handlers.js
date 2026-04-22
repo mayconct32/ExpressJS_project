@@ -16,7 +16,7 @@ export const exception_handler = (error, req, res, next) => {
     }
     if (error instanceof ApiError){
         return res.status(error.status_code).json({message: error.message})
-    }
+    } 
     console.log(error)
     return res.status(500).json({message: "Internal server error"})
 }
