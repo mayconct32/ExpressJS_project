@@ -13,21 +13,7 @@ export class UserRepository extends IUserRepository {
     }
 
     async findById(userId) {
-        const user = await users_model.findById(userId)
-        if (!user) {
-            throw new ApiError("This user does not exist", 404)
-        }
-        return user
-    }
-
-    async emailExists(email) {
-        const user = await users_model.findOne({ email })
-        return !!user
-    }
-
-    async usernameExists(username) {
-        const user = await users_model.findOne({ username })
-        return !!user
+        return await users_model.findById(userId)
     }
 
     async create(userData) {
@@ -35,13 +21,14 @@ export class UserRepository extends IUserRepository {
     }
 
     async update(userId, updateData) {
-        await users_model.updateOne({ _id: userId }, updateData)
+        return await users_model.findByIdAndUpdate(
+            userId,
+            updateData,
+            { new: true }
+        )
     }
 
     async delete(userId) {
-        const result = await users_model.deleteOne({ _id: userId })
-        if (result.deletedCount === 0) {
-            throw new ApiError("This user does not exist", 404)
-        }
+        return await users_model.deleteOne({ _id: userId })
     }
 }
