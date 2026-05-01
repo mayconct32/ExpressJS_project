@@ -3,7 +3,7 @@ import { encrypt_password, verify_password } from "./encryption.js"
 import { ApiError } from "../exceptions.js"
 
 
-export class UsersService {
+class UsersService {
     constructor(userRepository) {
         this.userRepository = userRepository
     }

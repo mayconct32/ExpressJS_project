@@ -1,10 +1,17 @@
+import { ApiError } from "../../exceptions.js"
 import { authService } from "../../services/auth_service.js"
 
 
 export class AuthController {
+    constructor(authService) {
+        this.authService = authService
+    }
+
     create_token = async (req, res) => {
-        const payload = req.user_token_payload
-        const token = authService.coding_token(payload)
-        return res.status(201).json({token: token})
+        const { username, password } = req.body
+        const token = await this.authService.create_token(
+            username, password
+        )
+        return res.status(201).json({access_token: token})
     }
 }
