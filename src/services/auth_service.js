@@ -6,7 +6,7 @@ import { verify_password } from "./encryption.js"
 
 dotenv.config({path: [".env", "../.env"]})
 
-export class AuthService {
+class AuthService {
     constructor(userRepository) {
         this.userRepository = userRepository
     }
@@ -15,8 +15,10 @@ export class AuthService {
         const token = jwt.sign(
             payload,
             process.env.SECRET_KEY,
-            {algorithm: process.env.ALGORITHM},
-            {expiresIn: process.env.TOKEN_EXPIRATION_TIME}
+            {
+                algorithm: process.env.ALGORITHM,
+                expiresIn: process.env.TOKEN_EXPIRATION_TIME
+            }
         )
         return token
     }
@@ -30,40 +32,39 @@ export class AuthService {
         }
     }
 
-    authenticate_credentials = async (username, password) => {
+    create_token = async (username, password) => {
         const user = await this.userRepository.findByUsername(username)
         if (!user) {
-            return
+            throw new ApiError("Invalid username or password", 403)
         }
 
         const is_valid_password = await verify_password(password, user.password)
         if (!is_valid_password) {
-            return
+            throw new ApiError("Invalid username or password", 403)
         }
 
-        return user
-    }
-
-    build_user_token_payload = (user) => {
-        return {
-            user_id: String(user._id),
+        const payload = {
+            user_id: user.id,
             username: user.username,
             email: user.email
         }
+
+        const token = this.coding_token(payload)
+        return token 
     }
 
-    get_token_from_authorization_header = (authorization_header) => {
-        if (!authorization_header) {
-            return
+    verify_permission = (token, user_id) => {
+        if (!token) {
+            throw new ApiError("Please log in", 401)
         }
-
-        if (authorization_header.startsWith("Bearer ")) {
-            return authorization_header.slice(7).trim()
+        if (token.startsWith("Bearer ")) {
+            token = token.slice(7).trim()
         }
-
-        return authorization_header
+        const current_user = this.decode_token(token)
+        if (!current_user || user_id != current_user.user_id) {
+            throw new ApiError("Unauthorized", 401)
+        }
     }
 }
 
 export const authService = new AuthService(new UserRepository())
-
