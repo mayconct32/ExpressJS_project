@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "..."
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "type": "module",
   "author": "",
@@ -18,5 +18,14 @@
     "mongoose": "^9.3.2",
     "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^0.0.0",
+    "jest": "^30.3.0",
+    "mongodb-memory-server": "^11.1.0",
+    "superagent": "^10.3.0",
+    "superset": "^3.0.3",
+    "supertest": "^7.2.2"
   }
 }

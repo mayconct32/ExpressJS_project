@@ -1,10 +1,12 @@
 import { mongodb_connection } from "../db_connection.js"
 import { server_http } from "./socket_io.js"
+import dotenv from "dotenv"
 
 
 async function start_server() {
   try {
-    await mongodb_connection();
+    dotenv.config({path: [".env","../.env"]})
+    await mongodb_connection(process.env.DATABASE_URL);
   } catch (error) {
     console.error("Failed to connect to MongoDB", error);
     process.exit(1);
