@@ -1,4 +1,3 @@
-import { response } from "express"
 import { app } from "../src/express/app.js"
 import request from "supertest"
 
@@ -21,7 +20,7 @@ describe("test controllers/users (success)", () =>
 
         test("Get User status code 200", async () =>
             {   
-                const response = await await request(app)
+                const response = await request(app)
                     .get(`/users/${user._id}`)
                     .set("authorization", token)
                     .set("Content-Type", "application/json")
@@ -197,6 +196,74 @@ describe("test controllers/users POST (error)", () =>
                 )
             }
         )
+    }
+)
 
+describe("test controllers/users GET (error)", () => 
+    {
+        test("(invalid ID) status code 400", async () => 
+            {
+                const response = await request(app)
+                    .get("/users/g3j4f2v1bg27sd4")
+                expect(response.statusCode).toBe(400)
+                expect(response.body).toStrictEqual(
+                    {
+                        errors: [
+                            {
+                                location: "params",
+                                msg: "This ID is invalid",
+                                path: "user_id",
+                                type: "field",
+                                value: "g3j4f2v1bg27sd4"
+                            }
+                        ]
+                    }
+                )
+            }
+        )
+
+        test("(unauthorized please log in) status code 401", async () =>
+            {
+                const response = await request(app)
+                    .get(`/users/${user._id}`)
+                expect(response.statusCode).toBe(401)
+                expect(response.body).toStrictEqual(
+                    {
+                        message: "Please log in"
+                    }
+                )
+            }
+        )
+
+        test("(invalid token) status code 401", async () =>
+            {
+                const response = await request(app)
+                    .get(`/users/${user._id}`)
+                    .set("authorization", "invalid token")
+                    .set("Content-Type", "application/json")
+                expect(response.statusCode).toBe(401)
+                expect(response.body).toStrictEqual(
+                    {
+                        message: "unauthorized"
+                    }
+                )
+            }
+        )
+
+        test("(not found) status code 404", async () => 
+            {
+                const fake_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjlmNjZkN2EwYWNhMzI1YzAyMzBkMDdiIiwidXNlcm5hbWUiOiJtYXljb25sb2JvIiwiZW1haWwiOiJtYXljb25AZ21haWwuY29tIn0._3GV1cJQXyYub0DIdNcbYP3Z2rntwKqA2X0R5ArmYbk"
+                const response = await request(app)
+                    .get("/users/69f66d7a0aca325c0230d07b")
+                    .set("authorization", fake_token)
+                    .set("Content-Type", "application/json")
+                expect(response.body).toStrictEqual(
+                    {
+                        message: "This user does not exist"
+                    }
+                )
+                expect(response.statusCode).toBe(404)
+            }
+        )
     }
 )
