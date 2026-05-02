@@ -16,12 +16,18 @@ beforeAll(async () =>
 )
 
 beforeEach(async () => {
-    userData = {
+    user1 = {
         username: "userexamplee",
         email: "userr@example.com",
         password: "test123123123"
     }
-    user = await users_model.create(userData)
+    user2 = {
+        username: "userexample2",
+        email: "user2@example.com",
+        password: "test123123123"
+    }
+    response = await users_model.create([user1, user2])
+    user = response[0]
     const user_token = authService.build_user_token_payload(user)
     token = authService.coding_token(user_token)
 })
@@ -35,6 +41,7 @@ afterEach(async () => {
 
 afterAll(async () => 
     {
+        await mongoose.connection.close()
         await mongod.stop();
     }
 )

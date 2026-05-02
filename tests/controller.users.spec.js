@@ -1,3 +1,4 @@
+import { application, json } from "express"
 import { app } from "../src/express/app.js"
 import request from "supertest"
 
@@ -330,6 +331,256 @@ describe("test controllers/users DELETE (error)", () =>
                 expect(response.body).toStrictEqual(
                     {
                         message: "unauthorized"
+                    }
+                )
+            }
+        )
+    }
+)
+
+describe("test controllers/users PUT (error)", () =>
+    {
+        test("(no username) status code 400", async () =>
+            {
+                const response = await request(app)
+                    .put(`/users/${user._id}`)
+                    .send(
+                        {
+                            email: user.email,
+                            password: user.password
+                        }
+                    )
+                    .set("authorization", token)
+                    .set("Content-Type", "application/json")
+                expect(response.statusCode).toBe(400)
+                expect(response.body).toStrictEqual(
+                    {
+                        errors: [
+                            {
+                                location: "body",
+                                msg: "Requires username",
+                                path: "username",
+                                type: "field"
+                            },
+                            {
+                                location: "body",
+                                msg: "The username must be at least 5 characters long",
+                                path: "username",
+                                type: "field",
+                                value: ""
+                            }
+                        ]
+                    }
+                )
+            }
+        )
+
+        test("(no email) status code 400", async () =>
+            {
+                const response = await request(app)
+                    .put(`/users/${user._id}`)
+                    .send(
+                        {
+                            username: user.username,
+                            password: user.password
+                        }
+                    )
+                    .set("authorization", token)
+                    .set("Content-Type", "application/json")
+                expect(response.statusCode).toBe(400)
+                expect(response.body).toStrictEqual(
+                    {
+                        errors: [
+                            {
+                                location: "body",
+                                msg: "Requires email",
+                                path: "email",
+                                type: "field"
+                            },
+                            {
+                                location: "body",
+                                msg: "This is not a valid email",
+                                path: "email",
+                                type: "field",
+                                value: "",
+
+                            }
+                        ]
+                    }
+                )
+            }
+        )
+
+        test("(username is already in use) status code 409", async () =>
+            {
+                const response = await request(app)
+                    .put(`/users/${user._id}`)
+                    .send(
+                        {
+                            username: user2.username,
+                            email: user.email,
+                            password: user.password
+                        }
+                    )
+                    .set("authorization", token)
+                    .set("Content-Type", "application/json")
+                expect(response.statusCode).toBe(409)
+                expect(response.body).toStrictEqual(
+                    {
+                        message: "This username is already in use"
+                    }
+                )
+            }
+        )
+
+        test("(email is already in use) status code 409", async () =>
+            {
+                const response = await request(app)
+                    .put(`/users/${user._id}`)
+                    .send(
+                        {
+                            username: user.username,
+                            email: user2.email,
+                            password: user.password
+                        }
+                    )
+                    .set("authorization", token)
+                    .set("Content-Type", "application/json")
+                expect(response.statusCode).toBe(409)
+                expect(response.body).toStrictEqual(
+                    {
+                        message: "This email is already in use"
+                    }
+                )
+            }
+        )
+
+        test("(no password) status code 400", async () =>
+            {
+                const response = await request(app)
+                    .put(`/users/${user._id}`)
+                    .send(
+                        {
+                            username: user.username,
+                            email: user.email
+                        }
+                    )
+                    .set("authorization", token)
+                    .set("Content-Type", "application/json")
+                expect(response.statusCode).toBe(400)
+                expect(response.body).toStrictEqual(
+                    {
+                        errors: [
+                            {
+                                location: "body",
+                                msg: "Requires password",
+                                path: "password",
+                                type: "field"
+                            },
+                            {
+                                location: "body",
+                                msg: "The password must be at least 8 characters long",
+                                path: "password",
+                                type: "field",
+                                value: "",
+                            }
+                        ]
+                    }
+                )
+            }
+        )
+
+        test("(invalid ID) status code 400", async () =>
+            {
+                const response = await request(app)
+                    .put("/users/ggg3dsadsasdsdsd")
+                    .send(
+                        {
+                            username: user.username,
+                            email: user.email,
+                            password: user.password
+                        }
+                    )
+                    .set("authorization", token)
+                    .set("Content-Type", "application/json")
+                expect(response.statusCode).toBe(400)
+                expect(response.body).toStrictEqual(
+                    {
+                        errors: [
+                            {
+                                location: "params",
+                                msg: "This ID is invalid",
+                                path: "user_id",
+                                type: "field",
+                                value: "ggg3dsadsasdsdsd"
+                            }
+                        ]
+                    }
+                )
+            }
+        )
+
+        test("(unauthorized please log in) status code 401", async () =>
+            {
+                const response = await request(app)
+                    .put(`/users/${user._id}`)
+                    .send(
+                        {
+                            username: user.username,
+                            email: user.email,
+                            password: user.password
+                        }
+                    )
+                    .set("Content-Type", "application/json")
+                expect(response.statusCode).toBe(401)
+                expect(response.body).toStrictEqual(
+                    {
+                        message: "Please log in"
+                    }
+                )
+            }
+        )
+
+        test("(invalid token) status code 401", async () =>
+            {
+                const response = await request(app)
+                    .put(`/users/${user._id}`)
+                    .send(
+                        {
+                            username: user.username,
+                            email: user.email,
+                            password: user.password
+                        }
+                    )
+                    .set("authorization", "invalid token")
+                    .set("Content-Type", "application/json")
+                expect(response.statusCode).toBe(401)
+                expect(response.body).toStrictEqual(
+                    {
+                        message: "unauthorized"
+                    }
+                )
+            }
+        )
+
+        test("(not found) status code 404", async () => 
+            {
+                const fake_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjlmNjZkN2EwYWNhMzI1YzAyMzBkMDdiIiwidXNlcm5hbWUiOiJtYXljb25sb2JvIiwiZW1haWwiOiJtYXljb25AZ21haWwuY29tIn0._3GV1cJQXyYub0DIdNcbYP3Z2rntwKqA2X0R5ArmYbk"
+                const response = await request(app)
+                    .put("/users/69f66d7a0aca325c0230d07b")
+                    .send(
+                        {
+                            username: user.username,
+                            email: user.email,
+                            password: user.password
+                        }
+                    )
+                    .set("authorization", fake_token)
+                    .set("Content-Type", "application/json")
+                expect(response.statusCode).toBe(404)
+                expect(response.body).toStrictEqual(
+                    {
+                        message: "This user does not exist"
                     }
                 )
             }
