@@ -1,3 +1,4 @@
+import { response } from "express"
 import { app } from "../src/express/app.js"
 import request from "supertest"
 
@@ -57,3 +58,145 @@ describe("test controllers/users (success)", () =>
     }
 )
 
+describe("test controllers/users POST (error)", () => 
+    {
+        test("(no username) status code 400", async () =>
+            {
+                const response = await request(app)
+                    .post("/users").send(
+                        {
+                            email: "lobolobo@gmail.com",
+                            password: "lobuzinho123"
+                        }
+                    )
+                expect(response.statusCode).toBe(400)
+                expect(response.body).toStrictEqual(
+                    {
+                        errors: [
+                            {
+                                location: "body",
+                                msg: "Requires username",
+                                path: "username",
+                                type: "field"
+                            },
+                            {
+                                location: "body",
+                                msg: "The username must be at least 5 characters long",
+                                path: "username",
+                                type: "field",
+                                value: ""
+                            }
+                        ]
+                    }
+                )
+            }
+        )
+
+        test("(username is already in use) status code 409", async () =>
+            {
+                const response = await request(app)
+                    .post("/users")
+                    .send(
+                        {
+                            username: user.username,
+                            email: "newemail@example.com",
+                            password: "123123123test"
+                        }
+                    )
+                expect(response.statusCode).toBe(409)
+                expect(response.body).toStrictEqual(
+                    {
+                        message: "This username is already in use"
+                    }
+                )
+            }
+        )
+
+        test("(no email) status code 400", async () => {
+                const response = await request(app)
+                    .post("/users")
+                    .send(
+                        {
+                            username: "newusername123test",
+                            password: "password123321"
+                        }
+                    )
+                expect(response.statusCode).toBe(400)
+                expect(response.body).toStrictEqual(
+                    {
+                        errors: [
+                            {
+                                location: "body",
+                                msg: "Requires email",
+                                path: "email",
+                                type: "field"
+                            },
+                            {
+                                location: "body",
+                                msg: "This is not a valid email",
+                                path: "email",
+                                type: "field",
+                                value: "",
+
+                            }
+                        ]
+                    }
+                )
+            }
+        )
+
+        test("(email is already in use) status code 409", async () =>
+            {
+                const response = await request(app)
+                    .post("/users")
+                    .send(
+                        {
+                            username: "newusername",
+                            email: user.email,
+                            password: "newpassword123"
+                        }
+                    )
+                expect(response.statusCode).toBe(409)
+                expect(response.body).toStrictEqual(
+                    {
+                        message: "This email is already in use"
+                    }
+                )
+            }
+        )
+
+        test("(no password) status code 400", async () => 
+            {
+                const response = await request(app)
+                    .post("/users")
+                    .send(
+                        {
+                            username: "usernametest123",
+                            email: "email@email.com"
+                        }
+                    )
+                expect(response.statusCode).toBe(400)
+                expect(response.body).toStrictEqual(
+                    {
+                        errors: [
+                            {
+                                location: "body",
+                                msg: "Requires password",
+                                path: "password",
+                                type: "field"
+                            },
+                            {
+                                location: "body",
+                                msg: "The password must be at least 8 characters long",
+                                path: "password",
+                                type: "field",
+                                value: "",
+                            }
+                        ]
+                    }
+                )
+            }
+        )
+
+    }
+)
