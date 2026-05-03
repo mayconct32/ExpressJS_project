@@ -1,4 +1,3 @@
-import { application, json } from "express"
 import { app } from "../src/express/app.js"
 import request from "supertest"
 
@@ -7,7 +6,8 @@ describe("test controllers/users (success)", () =>
     {
         test("Insert User status code 201", async () =>
             {
-                const response = await request(app).post("/users")
+                const response = await request(app)
+                    .post("/users")
                     .send(
                         {
                             username: "usertest",
@@ -16,6 +16,13 @@ describe("test controllers/users (success)", () =>
                         }
                     )
                 expect(response.statusCode).toBe(201)
+                expect(response.body).toStrictEqual(
+                    {
+                        user_id: expect.any(String),
+                        username: "usertest",
+                        email: "usertest@gmail.com"
+                    }
+                )
             }
         )
 
@@ -26,6 +33,13 @@ describe("test controllers/users (success)", () =>
                     .set("authorization", token)
                     .set("Content-Type", "application/json")
                 expect(response.statusCode).toBe(200)
+                expect(response.body).toStrictEqual(
+                    {
+                        user_id: expect.any(String),
+                        username: user.username,
+                        email: user.email
+                    }
+                )
             }
         )
 
@@ -36,6 +50,11 @@ describe("test controllers/users (success)", () =>
                     .set("authorization", token)
                     .set("Content-Type", "application/json")
                 expect(response.statusCode).toBe(200)
+                expect(response.body).toStrictEqual(
+                    {
+                        message: "The user has been successfully deleted"
+                    }
+                )
             }
         )
 
@@ -53,6 +72,11 @@ describe("test controllers/users (success)", () =>
                         }
                     )
                 expect(response.statusCode).toBe(200)
+                expect(response.body).toStrictEqual(
+                    {
+                        message: "The user has been successfully updated."
+                    }
+                )
             }
         )
     }
@@ -253,7 +277,6 @@ describe("test controllers/users GET (error)", () =>
 
         test("(not found) status code 404", async () => 
             {
-                const fake_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjlmNjZkN2EwYWNhMzI1YzAyMzBkMDdiIiwidXNlcm5hbWUiOiJtYXljb25sb2JvIiwiZW1haWwiOiJtYXljb25AZ21haWwuY29tIn0._3GV1cJQXyYub0DIdNcbYP3Z2rntwKqA2X0R5ArmYbk"
                 const response = await request(app)
                     .get("/users/69f66d7a0aca325c0230d07b")
                     .set("authorization", fake_token)
@@ -294,7 +317,6 @@ describe("test controllers/users DELETE (error)", () =>
 
         test("(not found) status code 404", async () => 
             {
-                const fake_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjlmNjZkN2EwYWNhMzI1YzAyMzBkMDdiIiwidXNlcm5hbWUiOiJtYXljb25sb2JvIiwiZW1haWwiOiJtYXljb25AZ21haWwuY29tIn0._3GV1cJQXyYub0DIdNcbYP3Z2rntwKqA2X0R5ArmYbk"
                 const response = await request(app)
                     .delete("/users/69f66d7a0aca325c0230d07b")
                     .set("authorization", fake_token)
@@ -565,7 +587,6 @@ describe("test controllers/users PUT (error)", () =>
 
         test("(not found) status code 404", async () => 
             {
-                const fake_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjlmNjZkN2EwYWNhMzI1YzAyMzBkMDdiIiwidXNlcm5hbWUiOiJtYXljb25sb2JvIiwiZW1haWwiOiJtYXljb25AZ21haWwuY29tIn0._3GV1cJQXyYub0DIdNcbYP3Z2rntwKqA2X0R5ArmYbk"
                 const response = await request(app)
                     .put("/users/69f66d7a0aca325c0230d07b")
                     .send(
