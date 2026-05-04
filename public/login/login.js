@@ -36,16 +36,15 @@ form_login.addEventListener("submit", (e) => {
 		body: JSON.stringify(body),
 	};
 	fetch("http://127.0.0.1:3000/auth", headers)
-	.then(response => response.json()
-		.then(response => 
-			{
-				sessionStorage.setItem("token", response.token)
-				window.location.replace('http://127.0.0.1:3000/chat/chat_example.html');
-			}
-		)
-		.catch(err => err)
-	)
-	.catch(response => response)
+	.then(async (response) => {
+		console.log("status:", response.status);
+		const data = await response.json();
+		sessionStorage.setItem("token", data.access_token);
+		window.location.replace('http://127.0.0.1:3000/chat/chat_example.html');
+	})
+	.catch((err) => {
+		console.error("error:", err);
+  	});
 });
 
 const form_register = document.getElementById('register-form');
@@ -68,7 +67,7 @@ form_register.addEventListener("submit", (e) => {
 			},
 			body: JSON.stringify(body),
 		};
-        const a = fetch("http://127.0.0.1:3000/users", headers)
+    const a = fetch("http://127.0.0.1:3000/users", headers)
 		.then(
 			response => response.json()
 			.then(json => {
