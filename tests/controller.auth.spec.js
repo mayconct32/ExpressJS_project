@@ -17,7 +17,7 @@ describe("test controllers/auth (success)", () =>
                 expect(response.statusCode).toBe(201)
                 expect(response.body).toStrictEqual(
                     {
-                        token:  expect.any(String)
+                        access_token:  expect.any(String)
                     }
                 )
             }

@@ -2,6 +2,7 @@ import dotenv from "dotenv"
 import jwt from "jsonwebtoken"
 import { UserRepository } from "../repositories/users_repository.js"
 import { verify_password } from "./encryption.js"
+import { ApiError } from "../exceptions.js"
 
 
 dotenv.config({path: [".env", "../.env"]})
@@ -40,7 +41,7 @@ class AuthService {
 
         const is_valid_password = await verify_password(password, user.password)
         if (!is_valid_password) {
-            throw new ApiError("Invalid username or password", 403)
+            throw new ApiError("Invalid username or passwordd", 403)
         }
 
         const payload = {

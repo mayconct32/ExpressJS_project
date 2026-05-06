@@ -247,7 +247,7 @@ describe("test controllers/users GET (error)", () =>
             }
         )
 
-        test("(unauthorized please log in) status code 401", async () =>
+        test("(Unauthorized please log in) status code 401", async () =>
             {
                 const response = await request(app)
                     .get(`/users/${user._id}`)
@@ -269,7 +269,7 @@ describe("test controllers/users GET (error)", () =>
                 expect(response.statusCode).toBe(401)
                 expect(response.body).toStrictEqual(
                     {
-                        message: "unauthorized"
+                        message: "Unauthorized"
                     }
                 )
             }
@@ -330,7 +330,7 @@ describe("test controllers/users DELETE (error)", () =>
             }
         )
 
-        test("(unauthorized please log in) status code 401", async () =>
+        test("(Unauthorized please log in) status code 401", async () =>
             {
                 const response = await request(app)
                     .delete(`/users/${user._id}`)
@@ -352,7 +352,7 @@ describe("test controllers/users DELETE (error)", () =>
                 expect(response.statusCode).toBe(401)
                 expect(response.body).toStrictEqual(
                     {
-                        message: "unauthorized"
+                        message: "Unauthorized"
                     }
                 )
             }
@@ -542,7 +542,7 @@ describe("test controllers/users PUT (error)", () =>
             }
         )
 
-        test("(unauthorized please log in) status code 401", async () =>
+        test("(Unauthorized please log in) status code 401", async () =>
             {
                 const response = await request(app)
                     .put(`/users/${user._id}`)
@@ -579,7 +579,7 @@ describe("test controllers/users PUT (error)", () =>
                 expect(response.statusCode).toBe(401)
                 expect(response.body).toStrictEqual(
                     {
-                        message: "unauthorized"
+                        message: "Unauthorized"
                     }
                 )
             }

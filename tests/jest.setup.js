@@ -33,9 +33,8 @@ beforeEach(async () =>
         }
         const response = await users_model.create([user1, user2])
         user = response[0]
-        const user_token = authService.build_user_token_payload(user)
         fake_token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjlmNjZkN2EwYWNhMzI1YzAyMzBkMDdiIiwidXNlcm5hbWUiOiJtYXljb25sb2JvIiwiZW1haWwiOiJtYXljb25AZ21haWwuY29tIn0._3GV1cJQXyYub0DIdNcbYP3Z2rntwKqA2X0R5ArmYbk"
-        token = authService.coding_token(user_token)
+        token = await authService.create_token(user.username, "test123123123")
     }
 )
 
