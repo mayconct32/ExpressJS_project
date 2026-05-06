@@ -41,7 +41,7 @@ class AuthService {
 
         const is_valid_password = await verify_password(password, user.password)
         if (!is_valid_password) {
-            throw new ApiError("Invalid username or passwordd", 403)
+            throw new ApiError("Invalid username or password", 403)
         }
 
         const payload = {

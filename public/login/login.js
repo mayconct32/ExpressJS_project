@@ -1,3 +1,5 @@
+import { API_BASE_URL } from "../config.js"
+
 $(function() {
     $('#login-form-link').click(function(e) {
 		$("#login-form").delay(100).fadeIn(100);
@@ -35,12 +37,12 @@ form_login.addEventListener("submit", (e) => {
 		},
 		body: JSON.stringify(body),
 	};
-	fetch("http://127.0.0.1:3000/auth", headers)
+	fetch(`${API_BASE_URL}/auth`, headers)
 	.then(async (response) => {
 		console.log("status:", response.status);
 		const data = await response.json();
 		sessionStorage.setItem("token", data.access_token);
-		window.location.replace('http://127.0.0.1:3000/chat/chat_example.html');
+		window.location.replace(`${API_BASE_URL}/chat/chat_example.html`);
 	})
 	.catch((err) => {
 		console.error("error:", err);
@@ -67,12 +69,12 @@ form_register.addEventListener("submit", (e) => {
 			},
 			body: JSON.stringify(body),
 		};
-    const a = fetch("http://127.0.0.1:3000/users", headers)
+    const a = fetch(`${API_BASE_URL}/users`, headers)
 		.then(
 			response => response.json()
 			.then(json => {
 				if (response.status === 201){
-					window.location.href = "http://127.0.0.1:3000/login/login_example.html"
+					window.location.href = `${API_BASE_URL}/login/login_example.html`
 				}
 			})
 			.catch(err => console.log(err))

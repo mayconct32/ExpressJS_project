@@ -1,4 +1,6 @@
-const socket = io("http://127.0.0.1:3000", {
+import { API_BASE_URL } from "../config.js"
+
+const socket = io(API_BASE_URL, {
   auth: {
     token: sessionStorage.getItem("token")
   }
@@ -21,7 +23,7 @@ socket.on('message', message => {
 
   if (typeof message === 'object') {
     item.innerHTML = `
-      <strong>${message.username}:</strong>
+      <strong style="color: #58d68d;">${message.username}:</strong>
       ${message.message}
       <time>${message.date}</time>
     `;

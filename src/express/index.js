@@ -22,8 +22,9 @@ async function start_server() {
   }
 
   try {
-    server_http.listen(3000, () => {
-      console.log("Server is running on PORT 3000");
+    const PORT = process.env.PORT || 3000
+    server_http.listen(PORT, () => {
+      console.log(`Server is running on PORT ${PORT}`);
     });
   } catch (error) {
     console.error("Failed to start server", error);

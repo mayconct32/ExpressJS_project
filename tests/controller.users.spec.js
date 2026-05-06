@@ -1,5 +1,6 @@
 import { app } from "../src/express/app.js"
 import request from "supertest"
+import { authService } from "../src/services/auth_service.js"
 
 
 describe("test controllers/users (success)", () =>
@@ -275,10 +276,11 @@ describe("test controllers/users GET (error)", () =>
             }
         )
 
-        test("(not found) status code 404", async () => 
+        test("(not found) status code 404", async () =>
             {
+                const invalidUserId = "69f66d7a0aca325c0230d07b"
                 const response = await request(app)
-                    .get("/users/69f66d7a0aca325c0230d07b")
+                    .get(`/users/${invalidUserId}`)
                     .set("authorization", fake_token)
                     .set("Content-Type", "application/json")
                 expect(response.body).toStrictEqual(
@@ -315,10 +317,11 @@ describe("test controllers/users DELETE (error)", () =>
             }
         )
 
-        test("(not found) status code 404", async () => 
+        test("(not found) status code 404", async () =>
             {
+                const invalidUserId = "69f66d7a0aca325c0230d07b"
                 const response = await request(app)
-                    .delete("/users/69f66d7a0aca325c0230d07b")
+                    .delete(`/users/${invalidUserId}`)
                     .set("authorization", fake_token)
                     .set("Content-Type", "application/json")
                 expect(response.statusCode).toBe(404)
@@ -585,10 +588,11 @@ describe("test controllers/users PUT (error)", () =>
             }
         )
 
-        test("(not found) status code 404", async () => 
+        test("(not found) status code 404", async () =>
             {
+                const invalidUserId = "69f66d7a0aca325c0230d07b"
                 const response = await request(app)
-                    .put("/users/69f66d7a0aca325c0230d07b")
+                    .put(`/users/${invalidUserId}`)
                     .send(
                         {
                             username: user.username,
