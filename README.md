@@ -67,12 +67,6 @@ public/
 
 Página de entrada do sistema. O usuário insere **username** e **password** para receber um token JWT.
 
-**Funcionalidades:**
-- Validação de credenciais
-- Armazenamento de token em sessionStorage
-- Redirecionamento automático para chat após sucesso
-- Feedback de erros
-
 ---
 
 ### Login - Register
@@ -80,12 +74,6 @@ Página de entrada do sistema. O usuário insere **username** e **password** par
 ![Login Register](./docs/screenshots/login-register.png)
 
 Página de criação de conta. O usuário fornece **username**, **email** e **password** para se registrar.
-
-**Funcionalidades:**
-- Validação de email único
-- Validação de username único
-- Validação de força de senha (8+ caracteres)
-- Redirecionamento para sign in após sucesso
 
 ---
 
